@@ -3,7 +3,7 @@ APP.Main = ((() => {
 
     let stories = null;
     let storyStart = 0;
-    const count = 20;
+    const count = 100;
     const main = $('main');
     let inDetails = false;
     let storyLoadCount = 0;
