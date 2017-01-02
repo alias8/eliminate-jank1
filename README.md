@@ -1,4 +1,3 @@
-# Udacity 60fps Course Samples
 
 **Please note: this code is intended for you to hone your debugging skills. It contains a lot of code that you should not use in production!**
 
@@ -14,8 +13,8 @@ Unfortunately it has a bunch of performance issues, such as:
 
 Your mission is to find and fix the issues, and make the app gloriously performant!
 
-## License
+[Here](http://udacity.github.io/news-aggregator/) is the live version of the janky app.
 
-See /LICENSE for more.
+The master branch fixes the issues.
 
-This is not a Google product.
+The webworkers branch is the same as the master branch but deploys a web worker for each XMLHttpRequest. 
