@@ -5,35 +5,35 @@ APP.Data = ((() => {
     const HN_STORYDETAILS_URL = `${HN_API_BASE}/v0/item/[ID].json`;
 
     function getTopStories(callback) {
-        request(HN_TOPSTORIES_URL, evt => {
-            callback(evt.target.response);
-        });
+        let myWorker = new Worker('scripts/requestWorker.js');
+        myWorker.onmessage = function (e) {
+            var result = e.data;
+            console.log('Message received from worker');
+            callback(result);
+        }
+        myWorker.postMessage([HN_TOPSTORIES_URL]);
     }
 
     function getStoryById(id, callback) {
-
+        let myWorker = new Worker('scripts/requestWorker.js');
+        myWorker.onmessage = function (e) {
+            var result = e.data;
+            console.log('Message received from worker');
+            callback(result);
+        }
         const storyURL = HN_STORYDETAILS_URL.replace(/\[ID\]/, id);
-
-        request(storyURL, evt => {
-            callback(evt.target.response);
-        });
+        myWorker.postMessage([storyURL]);
     }
 
     function getStoryComment(id, callback) {
-
+        let myWorker = new Worker('scripts/requestWorker.js');
+        myWorker.onmessage = function (e) {
+            var result = e.data;
+            console.log('Message received from worker');
+            callback(result);
+        }
         const storyCommentURL = HN_STORYDETAILS_URL.replace(/\[ID\]/, id);
-
-        request(storyCommentURL, evt => {
-            callback(evt.target.response);
-        });
-    }
-
-    function request(url, callback) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'json';
-        xhr.onload = callback;
-        xhr.send();
+        myWorker.postMessage([storyCommentURL]);
     }
 
     return {
@@ -43,3 +43,4 @@ APP.Data = ((() => {
     };
 
 }))();
+
