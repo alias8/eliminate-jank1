@@ -16,6 +16,6 @@ Your mission is to find and fix the issues, and make the app gloriously performa
 
 [Here](http://udacity.github.io/news-aggregator/) is the live version of the janky app.
 
-The master branch fixes the issues.
+The master branch fixes the issues. See [githubpages](https://alias8.github.io/news-aggregator/) link.
 
 The webworkers branch is the same as the master branch but deploys a web worker for each XMLHttpRequest. 
