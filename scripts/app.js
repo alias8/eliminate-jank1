@@ -32,6 +32,10 @@ APP.Main = ((() => {
         tmplStoryDetailsComment = tmplStoryDetailsComment.replace(intlRelative, '');
     }
 
+    var storyDetails = document.createElement('section');
+    storyDetails.classList.add('story-details');
+    document.body.appendChild(storyDetails);
+
     const storyTemplate =
         Handlebars.compile(tmplStory);
     const storyDetailsTemplate =
@@ -71,72 +75,57 @@ APP.Main = ((() => {
     }
 
     function onStoryClick(details) {
-        let storyDetails = $(`#sd-${details.id}`);
-        // Wait a little time then show the story details.
-        setTimeout(showStory.bind(this, details.id), 60);
-
-        // Create and append the story. A visual change...
-        // perhaps that should be in a requestAnimationFrame?
-        // And maybe, since they're all the same, I don't
-        // need to make a new element every single time? I mean,
-        // it inflates the DOM and I can only see one at once.
-        if (!storyDetails.length) {
-
-            if (details.url) {
-                details.urlobj = new URL(details.url);
-            }
-            let comment;
-            let commentsElement;
-            let storyHeader;
-            let storyContent;
-
-            const storyDetailsHtml = storyDetailsTemplate(details);
-            const kids = details.kids;
-            const commentHtml = storyDetailsCommentTemplate({
-                by: '', text: 'Loading comment...'
-            });
-
-            storyDetails = document.createElement('section');
-            storyDetails.setAttribute('id', `sd-${details.id}`);
-            storyDetails.classList.add('story-details');
-            storyDetails.innerHTML = storyDetailsHtml;
-
-            document.body.appendChild(storyDetails);
-
-            commentsElement = storyDetails.querySelector('.js-comments');
-            storyHeader = storyDetails.querySelector('.js-header');
-            storyContent = storyDetails.querySelector('.js-content');
-
-            const closeButton = storyDetails.querySelector('.js-close');
-            closeButton.addEventListener('click', hideStory.bind(this, details.id));
-
-            const headerHeight = storyHeader.getBoundingClientRect().height;
-            storyContent.style.paddingTop = `${headerHeight}px`;
-
-            if (typeof kids === 'undefined') {
-                return;
-            }
-            for (let k = 0; k < kids.length; k++) {
-                comment = document.createElement('aside');
-                comment.setAttribute('id', `sdc-${kids[k]}`);
-                comment.classList.add('story-details__comment');
-                comment.innerHTML = commentHtml;
-                commentsElement.appendChild(comment);
-
-                // Update the comment with the live data.
-                APP.Data.getStoryComment(kids[k], commentDetails => {
-
-                    commentDetails.time *= 1000;
-
-                    const comment = commentsElement.querySelector(
-                        `#sdc-${commentDetails.id}`);
-                    comment.innerHTML = storyDetailsCommentTemplate(
-                        commentDetails,
-                        localeData);
-                });
-            }
+        if (details.url) {
+            details.urlobj = new URL(details.url);
         }
 
+        let comment;
+        let commentsElement;
+        let storyHeader;
+        let storyContent;
+
+        const storyDetailsHtml = storyDetailsTemplate(details);
+        const kids = details.kids;
+        const commentHtml = storyDetailsCommentTemplate({
+            by: '', text: 'Loading comment...'
+        });
+
+        storyDetails.setAttribute('id', `sd-${details.id}`);
+        storyDetails.innerHTML = storyDetailsHtml;
+
+        commentsElement = storyDetails.querySelector('.js-comments');
+        storyHeader = storyDetails.querySelector('.js-header');
+        storyContent = storyDetails.querySelector('.js-content');
+
+        const closeButton = storyDetails.querySelector('.js-close');
+        closeButton.addEventListener('click', hideStory.bind(this, details.id));
+
+        const headerHeight = storyHeader.getBoundingClientRect().height;
+        storyContent.style.paddingTop = `${headerHeight}px`;
+
+        if (typeof kids === 'undefined') {
+            return;
+        }
+        for (let k = 0; k < kids.length; k++) {
+            comment = document.createElement('aside');
+            comment.setAttribute('id', `sdc-${kids[k]}`);
+            comment.classList.add('story-details__comment');
+            comment.innerHTML = commentHtml;
+            commentsElement.appendChild(comment);
+
+            // Update the comment with the live data.
+            APP.Data.getStoryComment(kids[k], commentDetails => {
+
+                commentDetails.time *= 1000;
+
+                const comment = commentsElement.querySelector(
+                    `#sdc-${commentDetails.id}`);
+                comment.innerHTML = storyDetailsCommentTemplate(
+                    commentDetails,
+                    localeData);
+            });
+        }
+        showStory(details.id);
     }
 
     function showStory(id) {
@@ -250,7 +239,7 @@ APP.Main = ((() => {
                 // Check if we need to load the next batch of stories.
                 const loadThreshold = (scrollHeight - offsetHeight - LAZY_LOAD_THRESHOLD);
                 if (scrollTopCapped > loadThreshold) {
-                    loadStoryBatch();
+                    requestAnimationFrame(loadStoryBatch);
                 }
             });
         });
